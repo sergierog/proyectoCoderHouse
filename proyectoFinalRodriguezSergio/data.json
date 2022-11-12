@@ -1,0 +1,29 @@
+[
+    {
+      "nombre": "Cargador",
+      "codigo": 1,
+      "precio": 30000,
+      "imagen":
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTT85oEMmOWdaj5qTEcoNlDs5wBASSRCzIyfQ&usqp=CAU"
+    },
+    {
+      "nombre": "Adaptador",
+      "codigo": 2,
+      "precio": 25000,
+      "imagen":
+        "https://www.imtecnologia.co/wp-content/uploads/2022/09/11311001-400x400.png"
+    },
+    {
+      "nombre": "Funda Celular",
+      "codigo": 3,
+      "precio": 15000,
+      "imagen":
+        "https://static.wixstatic.com/media/fbee12_0480c708e6c544f48733fa898bfb793a~mv2.png/v1/fill/w_342,h_342,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Dise%C3%B1o%20case%20izquierdo_webp.png"
+    },
+    {
+      "nombre": "Vidrio 3D",
+      "codigo": 4,
+      "precio": 12000,
+      "imagen": "https://www.toptecnouy.com/imgs/productos/productos31_31374.jpg"
+    }
+  ]

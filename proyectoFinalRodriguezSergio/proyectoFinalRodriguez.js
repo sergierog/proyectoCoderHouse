@@ -1,49 +1,31 @@
-// Primera version
-// let menu = prompt(`Elija su producto ?
-// \n 1. Cargador - $30000
-// \n 2. Adaptador - $25000
-// \n 3. Funda Celular - $15000
-// \n 4. Vidrio 3D - $12000`)
+document.addEventListener("DOMContentLoaded", () => {
+  fetchData();
+  if (localStorage.getItem("carrito")) {
+    carrito = JSON.parse(localStorage.getItem("carrito"));
+    renderizarCarrito();
+  }
+});
 
-const listaProd = [
-  {
-    nombre: "Cargador",
-    codigo: 1,
-    precio: 30000,
-    imagen:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTT85oEMmOWdaj5qTEcoNlDs5wBASSRCzIyfQ&usqp=CAU",
-  },
-  {
-    nombre: "Adaptador",
-    codigo: 2,
-    precio: 25000,
-    imagen:
-      "https://www.imtecnologia.co/wp-content/uploads/2022/09/11311001-400x400.png",
-  },
-  {
-    nombre: "Funda Celular",
-    codigo: 3,
-    precio: 15000,
-    imagen:
-      "https://static.wixstatic.com/media/fbee12_0480c708e6c544f48733fa898bfb793a~mv2.png/v1/fill/w_342,h_342,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Dise%C3%B1o%20case%20izquierdo_webp.png",
-  },
-  {
-    nombre: "Vidrio 3D",
-    codigo: 4,
-    precio: 12000,
-    imagen: "https://www.toptecnouy.com/imgs/productos/productos31_31374.jpg",
-  },
-];
+const fetchData = async () => {
+  try {
+    const response = await fetch("data.json");
+    const data = await response.json();
+    renderizarProductos(data);
+    detectarBtonoes(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 let carrito = {};
 
 // let cargarCarrito = () => {
 //   let seguir;
 //   while (seguir != "no") {
-//     let menu = prompt(`Elija su producto ? 
+//     let menu = prompt(`Elija su producto ?
 //          \n 1. Cargador - $30000
 //          \n 2. Adaptador - $25000
-//          \n 3. Funda Celular - $15000 
+//          \n 3. Funda Celular - $15000
 //          \n 4. Vidrio 3D - $12000`);
 //     //  carrito.push(menu)
 //     seguir = prompt("Desea agregar otro producto ? Si / No");
@@ -90,13 +72,6 @@ let carrito = {};
 // alert(`El costo total es : $ ${sumaProductos(carrito)}`)
 
 /// FUNCIONES DOM
-document.addEventListener("DOMContentLoaded", () => {
-    if(localStorage.getItem("carrito")){
-        carrito = JSON.parse(localStorage.getItem("carrito"))
-        renderizarCarrito()
-    }
-}
-)
 
 const contenedorProductos = document.querySelector("#contenedor-productos");
 const renderizarProductos = (data) => {
@@ -133,7 +108,7 @@ const detectarBtonoes = (data) => {
   });
 };
 const items = document.querySelector("#items");
-const renderizarCarrito = () => {
+const renderizarCarrito = (data) => {
   // Limpiar carrito coninner
   items.innerHTML = "";
   const template = document.querySelector("#template-carrito").content;
@@ -145,10 +120,10 @@ const renderizarCarrito = () => {
     template.querySelectorAll("td")[3].textContent =
       producto.precio * producto.cantidad;
 
-   // botones
-   template.querySelector(".btn-info").dataset.id = producto.codigo;
-   template.querySelector(".btn-danger").dataset.id = producto.codigo;
-   
+    // botones
+    template.querySelector(".btn-info").dataset.id = producto.codigo;
+    template.querySelector(".btn-danger").dataset.id = producto.codigo;
+
     const clone = template.cloneNode(true);
     fragment.appendChild(clone);
   });
@@ -156,9 +131,8 @@ const renderizarCarrito = () => {
 
   renderizarFooter();
   accionarBotones();
-  localStorage.setItem("carrito",JSON.stringify(carrito))
+  localStorage.setItem("carrito", JSON.stringify(carrito));
 };
-
 
 const footer = document.querySelector("#footer-carrito");
 const renderizarFooter = () => {
@@ -181,46 +155,62 @@ const renderizarFooter = () => {
 
   footer.appendChild(fragment);
 
-  const boton = document.querySelector("#vaciar-carrito")
-  boton.addEventListener("click",()=>{
-    carrito = {}
-    renderizarCarrito()
-  })
+  const boton = document.querySelector("#vaciar-carrito");
+  boton.addEventListener("click", () => {
+    swal({
+      title: "Esta seguro de vaciar su carrito?",
+      text: "Una vez vaciado tendra que seleccionar sus productos de nuevo!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        swal("Carrito vaciado!", {
+          icon: "success",
+          
+        })
+        carrito = {};
+        renderizarCarrito();
+      } else {
+        swal("Puede continuar comprando");
+      }
+    })
+    // carrito = {};
+    // renderizarCarrito();
+    
+  });
 };
 
-const accionarBotones = ()=>{
-    const botonesAgregar = document.querySelectorAll("#items .btn-info")
-    const botonesEliminar = document.querySelectorAll("#items .btn-danger")
+const accionarBotones = () => {
+  const botonesAgregar = document.querySelectorAll("#items .btn-info");
+  const botonesEliminar = document.querySelectorAll("#items .btn-danger");
 
-    botonesAgregar.forEach( boton =>{
-        boton.addEventListener("click", ()=>{
-       
-            carrito[boton.dataset.id]
-            const producto =  carrito[boton.dataset.id]
-            producto.cantidad ++
-            carrito[boton.dataset.id] = {...producto}
-            renderizarCarrito()
+  botonesAgregar.forEach((boton) => {
+    boton.addEventListener("click", () => {
+      carrito[boton.dataset.id];
+      const producto = carrito[boton.dataset.id];
+      producto.cantidad++;
+      carrito[boton.dataset.id] = { ...producto };
+      renderizarCarrito();
+    });
+  });
+  botonesEliminar.forEach((boton) => {
+    boton.addEventListener("click", () => {
+      const producto = carrito[boton.dataset.id];
+      producto.cantidad--;
+      if (producto.cantidad === 0) {
+        delete carrito[boton.dataset.id];
+      } else {
+        carrito[boton.dataset.id] = { ...producto };
+      }
+      renderizarCarrito();
+    });
+  });
+};
 
-        })
-    })
-    botonesEliminar.forEach( boton =>{
-        boton.addEventListener("click", ()=>{
-            const producto =  carrito[boton.dataset.id]
-            producto.cantidad --
-            if(producto.cantidad === 0){
-               delete carrito[boton.dataset.id]
-            }else{
-                carrito[boton.dataset.id] = {...producto}
-            
-            } renderizarCarrito ()
-            
-        })
-    })
-
-}
-
-renderizarProductos(listaProd);
-detectarBtonoes(listaProd);
+// renderizarProductos(listaProd);
+// detectarBtonoes(listaProd);
 
 // const template = document.querySelector("#template-footer")
 // console.log(template.querySelectorAll("td"))
